@@ -84,7 +84,7 @@ resource "aws_route_table_association" "private_subnet_2_association" {
 
 # NAT Gateway (Aquí)
 resource "aws_eip" "nat_eip" {
-  vpc = true
+  domain = true
 }
 
 resource "aws_nat_gateway" "nat_gw" {
