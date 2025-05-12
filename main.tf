@@ -82,6 +82,28 @@ resource "aws_route_table_association" "private_subnet_2_association" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
+# NAT Gateway (Aquí)
+resource "aws_eip" "nat_eip" {
+  vpc = true
+}
+
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.public_subnet.id
+
+  tags = {
+    Name = "nat_gateway"
+  }
+}
+
+# Ruta para la subnet privada hacia el NAT Gateway (Aquí)
+resource "aws_route" "private_subnet_route_to_nat" {
+  route_table_id         = aws_route_table.private_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_gw.id
+}
+
+
 #----------------------SG linux jumpserver----------------------
  resource "aws_security_group" "SG-linux-jumpserver" {
         vpc_id = aws_vpc.vpc_avance_devops.id #vpc id
